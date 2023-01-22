@@ -2,9 +2,9 @@ import sys
 
 import pandas as pd
 
-print(sys.argv)
+# print(sys.argv)
 
-# day = sys.argv[1]
+day = sys.argv[1]
 
 # some fancy stuff with pandas
 
