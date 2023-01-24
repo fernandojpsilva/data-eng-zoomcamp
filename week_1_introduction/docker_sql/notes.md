@@ -76,3 +76,15 @@ or
 1. docker-compose up -d 
 
 2. docker compose down
+
+# HW - Start docker containers and ingest data to db
+1. docker-compose up
+
+2. winpty python ingest_data.py \
+      --user=root \
+      --password=root \
+      --host=localhost \
+      --port=5431 \
+      --db=ny_taxi \
+      --table_name=green_taxi_trips \
+      --table_name_2=taxi_zones
