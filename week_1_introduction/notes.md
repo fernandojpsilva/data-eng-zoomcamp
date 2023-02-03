@@ -12,7 +12,7 @@ winpty python ingest_data.py \
       --port=5431 \
       --db=ny_taxi \
       --table_name=yellow_taxi_trips \
-      --url="http://<IP>/yellow_tripdata_2021-01.csv"
+      --url="http://<IP>:8000/yellow_tripdata_2021-01.csv"
 ```
 
 
