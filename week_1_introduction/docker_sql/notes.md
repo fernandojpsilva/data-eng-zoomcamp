@@ -43,7 +43,7 @@ docker run -it \
 
 URL (remote) = "https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz"
 
-URL2 (local) = "http://172.23.176.1/yellow_tripdata_2021-01.csv"
+URL2 (local) = "http://<IP>/yellow_tripdata_2021-01.csv"
 
 winpty python ingest_data.py \
       --user=root \
@@ -52,7 +52,7 @@ winpty python ingest_data.py \
       --port=5431 \
       --db=ny_taxi \
       --table_name=yellow_taxi_trips \
-      --url="http://172.23.176.1:8000/yellow_tripdata_2021-01.csv"
+      --url="http://<IP>/yellow_tripdata_2021-01.csv"
 
 python ingest_data.py --user=root --password=root --host=localhost --port=5431 --db=ny_taxi --table_name=yellow_taxi_trips --url="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz"
 
@@ -65,7 +65,7 @@ winpty docker run -it --network=pg-network taxi_ingest:v001 \
       --port=5432 \
       --db=ny_taxi \
       --table_name=yellow_taxi_trips \
-      --url="http://172.23.176.1:8000/yellow_tripdata_2021-01.csv"
+      --url="http://<IP>/yellow_tripdata_2021-01.csv"
 
 
 # Docker-Compose
@@ -88,3 +88,21 @@ or
       --db=ny_taxi \
       --table_name=green_taxi_trips \
       --table_name_2=taxi_zones
+
+
+# Steps
+1. Go to directory
+2. 'docker-compose up' where the Dockerfile is
+3. Open Python server 'winpty python -m http.server'
+4. Ingest using your Python script
+
+```
+winpty python ingest_data.py \
+      --user=root \
+      --password=root \
+      --host=localhost \
+      --port=5431 \
+      --db=ny_taxi \
+      --table_name=yellow_taxi_trips \
+      --url="http://<IP>/yellow_tripdata_2021-01.csv"
+```
