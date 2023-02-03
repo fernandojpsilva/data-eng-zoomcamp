@@ -1,4 +1,36 @@
-# Git Bash db
+# Steps
+1. cd to directory
+2. 'docker-compose up' where the Dockerfile is
+3. Open Python server 'winpty python -m http.server'
+4. Ingest using your Python script
+
+```
+winpty python ingest_data.py \
+      --user=root \
+      --password=root \
+      --host=localhost \
+      --port=5431 \
+      --db=ny_taxi \
+      --table_name=yellow_taxi_trips \
+      --url="http://<IP>/yellow_tripdata_2021-01.csv"
+```
+
+
+# HW - Start docker containers and ingest data to db
+1. docker-compose up
+
+2. winpty python ingest_data.py \
+      --user=root \
+      --password=root \
+      --host=localhost \
+      --port=5431 \
+      --db=ny_taxi \
+      --table_name=green_taxi_trips \
+      --table_name_2=taxi_zones
+
+***********************************************************
+## Not so important notes
+### Git Bash db
 docker run -it \
       -e POSTGRES_USER=root \
       -e POSTGRES_PASSWORD=root \
@@ -7,18 +39,23 @@ docker run -it \
       -p 5431:5432 \
       postgres:13
 
-# CMD
+***********************************************************
+
+### CMD
 pgcli -h localhost -p 5431 -u root -d ny_taxi
 
-# pgadmin
+***********************************************************
+
+### pgadmin
 docker run -it \
       -e PGADMIN_DEFAULT_EMAIL=admin@admin.com \
       -e PGADMIN_DEFAULT_PASSWORD=root \
       -p 8080:80 \
       dpage/pgadmin4
 
+***********************************************************
 
-# Network
+### Network
 cd PycharmProjects/data-eng-zoomcamp/week_1_introduction/docker_sql/
 
 docker network create pg-network
@@ -67,8 +104,9 @@ winpty docker run -it --network=pg-network taxi_ingest:v001 \
       --table_name=yellow_taxi_trips \
       --url="http://<IP>/yellow_tripdata_2021-01.csv"
 
+***********************************************************
 
-# Docker-Compose
+### Docker-Compose
 1. docker-compose up
 
 or
@@ -77,32 +115,3 @@ or
 
 2. docker compose down
 
-# HW - Start docker containers and ingest data to db
-1. docker-compose up
-
-2. winpty python ingest_data.py \
-      --user=root \
-      --password=root \
-      --host=localhost \
-      --port=5431 \
-      --db=ny_taxi \
-      --table_name=green_taxi_trips \
-      --table_name_2=taxi_zones
-
-
-# Steps
-1. Go to directory
-2. 'docker-compose up' where the Dockerfile is
-3. Open Python server 'winpty python -m http.server'
-4. Ingest using your Python script
-
-```
-winpty python ingest_data.py \
-      --user=root \
-      --password=root \
-      --host=localhost \
-      --port=5431 \
-      --db=ny_taxi \
-      --table_name=yellow_taxi_trips \
-      --url="http://<IP>/yellow_tripdata_2021-01.csv"
-```
