@@ -52,20 +52,78 @@ print(f"job finished successfully for day = {day}")
 
 ## Postgres in a container
 
+To run our DB with pgAdmin, we need to create a network to connect our DB to pgAdmin:
+
 ```docker
+docker network create pg-network
+
 docker run -it \
     -e POSTGRES_USER="root" \
     -e POSTGRES_PASSWORD="root" \
     -e POSTGRES_DB="ny_taxi" \
     -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data \
     -p 5432:5432 \
+    --network=pg-network \
+    --name pg-database \
     postgres:13
-```
-
-```docker
+    
 docker run -it \
   -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
   -e PGADMIN_DEFAULT_PASSWORD="root" \
   -p 8080:80 \
+  --network=pg-network \
+  --name pgadmin2 \
   dpage/pgadmin4
+```
+
+We can also ingest the data to our DB via Python script (see ingest_data.py). The following command will execute our script that send the data for us to explore in pgAdmin.
+
+```bash
+python ingest_data.py \
+  --user=root \
+  --password=... \
+  --host=localhost \
+  --port=5432 \
+  --db=ny_taxi \
+  --table_name=yellow_taxi_trips \
+  --url=https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz
+```
+
+## Dockerizing the script
+
+Let's modify the Dockerfile we created before to include our ingest_data.py script and create a new image:
+
+```dockerfile
+FROM python:3.9.1
+
+# We need to install wget to download the csv file
+RUN apt-get install wget
+# psycopg2 is a postgres db adapter for python: sqlalchemy needs it
+RUN pip install pandas sqlalchemy psycopg2
+
+WORKDIR /app
+COPY ingest_data.py ingest_data.py 
+
+ENTRYPOINT [ "python", "ingest_data.py" ]
+```
+
+Build the image:
+
+```docker
+docker build -t taxi_ingest:v001 .
+```
+
+And run it:
+
+```docker
+docker run -it \
+    --network=pg-network \
+    taxi_ingest:v001 \
+    --user=root \
+    --password=root \
+    --host=pg-database \
+    --port=5432 \
+    --db=ny_taxi \
+    --table_name=yellow_taxi_trips \
+    --url=https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz
 ```
